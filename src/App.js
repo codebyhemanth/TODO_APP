@@ -1,26 +1,71 @@
-import React from 'react';
-import logo from './logo.svg';
+import React,{useState,useEffect} from 'react';
+import { Button, FormControl,InputLabel,Input } from '@material-ui/core';
 import './App.css';
+import Todocomp from './Todocomp.js';
+import db from './firebase';
+import firebase from "firebase"
+
+
+
 
 function App() {
-  return (
+
+
+
+const [todos,setTodos]=useState(["hello"]);
+const[inputgiven,setInputgiven]=useState('');
+
+useEffect(() => {
+   
+  db.collection('todos').orderBy('timestamp','desc').onSnapshot(snapshot=>{
+    setTodos(snapshot.docs.map(doc=>({id: doc.id,
+     todo: doc.data().todo })
+    ))
+  })
+ 
+ 
+}, [])
+
+const handlesubmit=(e)=>{
+  e.preventDefault();
+  
+  db.collection('todos').add({
+    todo:inputgiven,
+    timestamp:firebase.firestore.FieldValue.serverTimestamp()
+  })
+
+  setInputgiven("");
+  
+
+}
+ return(
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>MAKE A NOTE 📔</h1>
+       
+       <form>
+       <FormControl>
+         <InputLabel>
+         💁  what to do???</InputLabel>
+         <Input value={inputgiven} onChange={event=>setInputgiven(event.target.value)}/>
+       </FormControl>
+       <FormControl>
+ 
+       <Button disabled={!inputgiven}  color="primary" type="submit" onClick={handlesubmit} >
+      add task
+           </Button>
+    
+       
+
+       </FormControl>
+       </form><div className="todos"> {todos.map((item ,index)=> <Todocomp item={item} />)}</div>
+      
+  
+  
     </div>
   );
+
 }
+
+
 
 export default App;

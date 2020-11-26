@@ -1,6 +1,14 @@
 .App {
   text-align: center;
 }
+.todos{
+  display:flex;
+  flex-direction: column;
+  max-width: 500px;
+  padding-left: 100px;
+  padding-top: 30px;
+ 
+}
 
 .App-logo {
   height: 40vmin;
